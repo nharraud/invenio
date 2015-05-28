@@ -487,9 +487,6 @@ def registerUser(req, email, passw, nickname, register_without_nickname=False,
                 note=activated,
                 last_login=datetime.datetime.now())
 
-    if CFG_ACCESS_CONTROL_NOTIFY_USER_ABOUT_NEW_ACCOUNT:
-        user.verify_email()
-
     try:
         db.session.add(user)
         db.session.commit()

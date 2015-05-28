@@ -24,6 +24,9 @@ from datetime import datetime
 
 from flask_login import current_user
 
+from invenio.base.globals import cfg
+
+from invenio.celery import celery
 from invenio.ext.passlib import password_context
 from invenio.ext.passlib.hash import invenio_aes_encrypted_email
 from invenio.ext.sqlalchemy import db
@@ -31,6 +34,7 @@ from invenio.ext.sqlalchemy import db
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from sqlalchemy_utils.types.choice import ChoiceType
+from sqlalchemy import event
 
 from .errors import AccountSecurityError, IntegrityUsergroupError
 from .helpers import send_account_activation_email
@@ -200,6 +204,21 @@ class User(db.Model):
     def is_active(self):
         """Return True if use is active."""
         return self.note != "0"
+
+
+@celery.task
+def celery_send_validation_email(user_id):
+    user = User.query.get(user_id)
+    user.verify_email()
+
+@event.listens_for(User, 'after_insert')
+def validate_user_email(mapper, connection, target):
+    """Send email address verification email.
+
+    Send a mail to new Users enabling them to verify their email address.
+    """
+    if cfg['CFG_ACCESS_CONTROL_NOTIFY_USER_ABOUT_NEW_ACCOUNT']:
+        celery_send_validation_email(target.id)
 
 
 def get_groups_user_not_joined(id_user, group_name=None):
