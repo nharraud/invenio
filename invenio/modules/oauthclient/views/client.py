@@ -121,6 +121,8 @@ def setup_app():
                 view=account_view_handler,
             )
         )
+        if conf.get('setup'):
+                conf.get('setup')(remote)
 
 
 @blueprint.route('/login/<remote_app>/')
@@ -170,6 +172,8 @@ def authorized(remote_app=None):
         state = serializer.loads(state_token)
         # Verify that state is for this session, app and that next parameter
         # have not been modified.
+        if state['sid'] != session.sid:
+            current_app.logger.error('Error during oauth: wrong session id. Authorization will fail.')
         assert state['sid'] == session.sid
         assert state['app'] == remote_app
         # Store next URL

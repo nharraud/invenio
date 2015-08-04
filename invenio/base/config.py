@@ -58,6 +58,7 @@ EXTENSIONS = [
 ]
 
 PACKAGES = [
+    # 'b2share.modules.*',
     'invenio.modules.*',
     'invenio.base',
 ]
@@ -69,11 +70,26 @@ PACKAGES_EXCLUDE = [
     'invenio.modules.linkbacks',
     'invenio.modules.multimedia',
     'invenio.modules.pages',
+    'invenio.modules.deposit',
 ]
 
 LEGACY_WEBINTERFACE_EXCLUDE = [
     'invenio.legacy.websubmit',
 ]
+
+# from invenio.modules.oauthclient.contrib import github
+from invenio.modules.oauthclient.contrib import unity
+
+OAUTHCLIENT_REMOTE_APPS = dict(
+    # github=github.REMOTE_APP,
+    unity=unity.REMOTE_APP,
+)
+
+UNITY_APP_CREDENTIALS = dict(
+    # will only work on development configurations
+    consumer_key= "b2share",
+    consumer_secret= "b2share8juelich",
+)
 
 CFG_PREFIX = distutils.sysconfig.get_config_var("prefix")
 

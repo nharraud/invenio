@@ -784,7 +784,7 @@ class BibRecDocs(object):
 
         for afile in self.list_latest_files(list_hidden=False):
             out += '\t<datafield tag="856" ind1="4" ind2=" ">\n'
-            url = afile.get_url()
+            url = afile.get_full_url()
             description = afile.get_description()
             comment = afile.get_comment()
             if url:
@@ -3069,6 +3069,11 @@ class BibDocFile(object):
 
     def hidden_p(self):
         return self.hidden
+
+    def get_full_url(self, download=False):
+        """Returns the absolute file url, with optional forced download."""
+        # self.fullurl always has at least one attribute
+        return "%s%s" % (self.fullurl, download and "&download=1" or "")
 
     def get_url(self):
         return self.url

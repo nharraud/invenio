@@ -24,6 +24,8 @@ import cStringIO
 from functools import wraps
 from flask import g, render_template, request, flash, redirect, url_for, \
     current_app, abort, Blueprint, send_file
+
+from flask_breadcrumbs import register_breadcrumb
 from flask_breadcrumbs import default_breadcrumb_root
 from flask_login import current_user
 from flask_menu import register_menu
@@ -47,7 +49,7 @@ blueprint = Blueprint('record', __name__, url_prefix="/" + CFG_SITE_RECORD,
                       static_url_path='/record', template_folder='templates',
                       static_folder='static')
 
-default_breadcrumb_root(blueprint, '.')
+default_breadcrumb_root(blueprint, 'breadcrumbs.record')
 
 
 def request_record(f):
@@ -60,8 +62,17 @@ def request_record(f):
         from invenio.legacy.search_engine import \
             guess_primary_collection_of_a_record, \
             check_user_can_view_record
+        from b2share.modules.main.utils import check_fresh_record
         # ensure recid to be integer
         recid = int(recid)
+
+        from invenio.legacy.search_engine import record_exists, get_merged_recid
+        if record_exists(recid) == 0:
+            # record doesn't exist, abort so it doesn't get incorrectly cached
+            abort(apache.HTTP_NOT_FOUND)  # The record is gone!
+        if check_fresh_record(current_user, recid):
+            return render_template('record_waitforit.html', recid=recid)
+
         g.collection = collection = Collection.query.filter(
             Collection.name == guess_primary_collection_of_a_record(recid)).\
             one()
@@ -121,13 +132,20 @@ def request_record(f):
         @register_template_context_processor
         def record_context():
             from invenio.modules.comments.api import get_mini_reviews
+            from invenio.legacy.bibdocfile.api import BibRecDocs
+            all_files = [f for f in BibRecDocs(recid, human_readable=True).list_latest_files(list_hidden=False) \
+                         if not f.is_icon()]
+            files = [f for f in all_files if f.is_restricted(current_user)[0] == 0]
+            has_private_files = len(files) < len(all_files)
             return dict(recid=recid,
                         record=record,
                         tabs=tabs,
                         title=title,
                         get_mini_reviews=get_mini_reviews,
                         collection=collection,
-                        format_record=_format_record
+                        format_record=_format_record,
+                        has_private_files=has_private_files,
+                        files=files
                         )
 
         pre_template_render.send(
@@ -142,6 +160,7 @@ def request_record(f):
 @blueprint.route('/<int:recid>/', methods=['GET', 'POST'])
 @blueprint.route('/<int:recid>', methods=['GET', 'POST'])
 @blueprint.route('/<int:recid>/export/<of>', methods=['GET', 'POST'])
+@register_breadcrumb(blueprint, '.', _('Record'))
 @wash_arguments({'of': (unicode, 'hd'), 'ot': (unicode, None)})
 @request_record
 @register_menu(blueprint, 'record.metadata', _('Information'), order=1,
@@ -167,7 +186,9 @@ def metadata(recid, of='hd', ot=None):
         id_user=current_user.get_id(),
         request=request)
 
-    return render_template('records/metadata.html', of=of, ot=ot)
+    from b2share.modules.b2deposit.edit import is_record_editable
+    return render_template('records/metadata.html', of=of, ot=ot,
+                            editable=is_record_editable(recid))
 
 
 @blueprint.route('/<int:recid>/references', methods=['GET', 'POST'])
