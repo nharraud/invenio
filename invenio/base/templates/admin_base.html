@@ -23,11 +23,15 @@
 {%- bundle "admin.js" %}
 
 {% block header %}
-  {%- include "base/scripts.html" %}
-  {{ super() }}
-  {% block head_meta %}{% endblock -%}
-  {% block head_tail %}{% endblock -%}
-{%- endblock header %}
+    {{ super() }}
+    {% block head_meta %}{% endblock -%}
+    {% block head_tail %}{% endblock -%}
+{% endblock header -%}
+
+{% block pagefooteradd -%}
+    {{ super() }}
+{% endblock pagefooteradd -%}
+
 {%- block _bottom_assets %}
   {# The legacy page requires that the scripts are loaded from the <head>
    # rather than at the bottom of the page.

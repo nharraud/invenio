@@ -34,10 +34,8 @@ from invenio.modules.accounts.errors import AccountSecurityError, \
     IntegrityUsergroupError
 from invenio.modules.accounts.models import User, Usergroup, UserUsergroup, \
     get_groups_user_not_joined
-
 from forms import JoinUsergroupForm, UsergroupForm, UserJoinGroupForm
 from config import GROUPS_AUTOCOMPLETE_LIMIT
-
 
 blueprint = Blueprint('webgroup', __name__, url_prefix="/yourgroups",
                       template_folder='templates', static_folder='static')

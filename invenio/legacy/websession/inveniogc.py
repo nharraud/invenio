@@ -30,6 +30,7 @@ import datetime
 import time
 import os
 
+
 from invenio.legacy.dbquery import run_sql, wash_table_column_name
 from invenio.config import CFG_LOGDIR, CFG_TMPDIR, CFG_CACHEDIR, \
         CFG_TMPSHAREDDIR, CFG_WEBSEARCH_RSS_TTL, CFG_PREFIX, \
@@ -126,6 +127,11 @@ def clean_tempfiles():
     write_message("- deleting/gzipping temporary empty/old "
             "BibReformat xml files")
     vstr = task_get_option('verbose') > 1 and '-v' or ''
+
+    write_message(" -cleaning up the simplestore upload folder")
+    gc_exec_command('''find %s -regextype sed -regex '.*[a-z0-9]\{32\}' -type d'''
+        ''' -mtime +7 -exec rm -rf {} \;'''
+            % (CFG_SIMPLESTORE_UPLOAD_FOLDER))
 
     write_message("- deleting/gzipping temporary old "
             "OAIHarvest xml files")

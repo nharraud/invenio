@@ -77,6 +77,7 @@
   {% endfor %}
   </ul>
   <div class="panel-footer">
+    {% if form.id_usergroup.query | count %}
     <form class="form-inline" action="{{ url_for('webgroup.join') }}"
           method="post" role="form">
       <div class="form-group">
@@ -88,6 +89,7 @@
         </button>
       </div>
     </form>
+    {% endif %}
   </div>
 {{helpers.panel_end(with_body=False)}}
 {% endblock %}
