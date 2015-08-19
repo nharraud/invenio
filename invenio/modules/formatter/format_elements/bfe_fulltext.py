@@ -177,8 +177,8 @@ def format_element(bfo, style, separator='; ', show_icons='no', focus_on_main_fi
         out += separator.join(url_list)
 
     if others_urls:
-        # external_link = len(others_urls) == 1 and _('external link') or _('external links')
-        # out += '<strong>%s</strong>: ' % external_link.capitalize()
+        external_link = len(others_urls) == 1 and _('external link') or _('external links')
+        out += '<strong>%s</strong>: ' % external_link.capitalize()
         url_list = []
         for url, descr in others_urls:
             url_list.append('<a '+style+' href="'+escape(url)+'">'+ \
@@ -289,7 +289,7 @@ def get_files(bfo, distinguish_main_and_additional_files=True, include_subformat
                 ## This format should be hidden.
                 continue
 
-            descr = filename
+            descr = _("Fulltext")
             if 'y' in complete_url:
                 descr = complete_url['y']
                 if descr == 'Fulltext':

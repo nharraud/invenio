@@ -44,12 +44,6 @@
     </xsl:if>
   </xsl:template>
   <xsl:template match="record">
-    <!-- PID as Identifier -->
-    <xsl:if test="datafield[@tag=024 and @ind1=7 and subfield[@code='2']='PID']">
-      <xsl:for-each select="datafield[@tag=024 and @ind1=7 and subfield[@code='2']='PID']">
-        <dc:identifier><xsl:value-of select="subfield[@code='a']"/></dc:identifier>
-      </xsl:for-each>
-    </xsl:if>
     <!-- DOI -->
     <xsl:if test="datafield[@tag=024 and @ind1=7 and (subfield[@code='2']='doi' or subfield[@code='2']='DOI')]">
       <xsl:for-each select="datafield[@tag=024 and @ind1=7 and (subfield[@code='2']='doi' or subfield[@code='2']='DOI')]">
@@ -62,15 +56,12 @@
     <xsl:for-each select="datafield[@tag=041]">
       <dc:language><xsl:value-of select="subfield[@code='a']"/></dc:language>
     </xsl:for-each>
-    <xsl:for-each select="datafield[@tag=546]">
-      <dc:language><xsl:value-of select="subfield[@code='a']"/></dc:language>
-    </xsl:for-each>
     <!-- Author/Creator -->
     <xsl:for-each select="datafield[@tag=100]">
       <dc:creator><xsl:value-of select="subfield[@code='a']"/></dc:creator>
     </xsl:for-each>
     <xsl:for-each select="datafield[@tag=700]">
-      <dc:contributor><xsl:value-of select="subfield[@code='a']"/></dc:contributor>
+      <dc:creator><xsl:value-of select="subfield[@code='a']"/></dc:creator>
     </xsl:for-each>
     <!-- Corporate Author/Creator, if no main author/creator -->
     <xsl:if test="not (datafield[@tag=100 and subfield[@code='a']] or datafield[@tag=700 and subfield[@code='a']])">
@@ -97,18 +88,6 @@
     <!-- Subject -->
     <xsl:for-each select="datafield[@tag=650 and @ind1=1 and @ind2=7]">
       <dc:subject><xsl:value-of select="subfield[@code='a']"/></dc:subject>
-    </xsl:for-each>
-    <xsl:for-each select="datafield[@tag=653 and @ind1=1]">
-      <dc:subject><xsl:value-of select="subfield[@code='a']"/></dc:subject>
-    </xsl:for-each>
-    <xsl:for-each select="datafield[@tag=526]">
-      <dc:subject><xsl:value-of select="subfield[@code='a']"/></dc:subject>
-    </xsl:for-each>
-    <xsl:for-each select="datafield[@tag=540]">
-      <dc:rights><xsl:value-of select="subfield[@code='a']"/></dc:rights>
-    </xsl:for-each>
-    <xsl:for-each select="datafield[@tag=542]">
-      <dc:rights><xsl:value-of select="subfield[@code='l']"/></dc:rights>
     </xsl:for-each>
     <!-- Abstract -->
     <xsl:for-each select="datafield[@tag=520]">
@@ -170,13 +149,6 @@
 <!--        <xsl:for-each select="datafield[@tag=856 and @ind1=4]">
           <dc:identifier><xsl:value-of select="subfield[@code='u']"/></dc:identifier>
         </xsl:for-each>
-        <xsl:for-each select="datafield[@tag=024]">
-          <dc:identifier><xsl:value-of select="subfield[@code='a']"/></dc:identifier>
-        </xsl:for-each>
-        <xsl:for-each select="datafield[@tag=337]">
-          <dc:type><xsl:value-of select="subfield[@code='a']"/></dc:type>
-        </xsl:for-each>
-        <dc:date><xsl:value-of select="fn:creation_date(controlfield[@tag=001])"/></dc:date>
 -->
 	<!-- Date. Please keep ISO 8601 format -->
 	<xsl:variable name="date" select="fn:eval_bibformat(controlfield[@tag='001'],'&lt;BFE_DATE date_format=&quot;%Y-%m-%d&quot; source_formats=&quot;%d %b %Y&quot; source_fields=&quot;269__c,260__c&quot;>')" />
