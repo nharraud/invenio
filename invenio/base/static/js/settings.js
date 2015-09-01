@@ -29,7 +29,8 @@ require.config({
     hogan: "vendors/hogan/web/builds/3.0.2/hogan-3.0.2.amd",
     text: "vendors/requirejs-hogan-plugin/text",
     flight: "vendors/flight",
-    typeahead: "vendors/typeahead.js/dist/typeahead.bundle",
+    typeahead: "vendors/typeahead.js/dist/typeahead.jquery",
+    bloodhound: "vendors/typeahead.js/dist/bloodhound",
     "bootstrap-select": "js/bootstrap-select",
     "jquery-caret": "vendors/jquery.caret/dist/jquery.caret-1.5.2",
     "jquery-tokeninput": "vendors/jquery-tokeninput/src/jquery.tokeninput",
@@ -74,7 +75,14 @@ require.config({
     },
     typeahead: {
       deps: ["jquery"],
-      exports: "Bloodhound"
+      exports: "typeahead",
+      init: function ($) {
+        return require.s.contexts._.registry['typeahead.js'].factory( $ );
+      }
+    },
+    bloodhound: {
+      deps: ["jquery"],
+      exports: "bloodhound",
     },
     "bootstrap-select": {
       deps: ["jquery"],

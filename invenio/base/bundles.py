@@ -86,7 +86,8 @@ styles = Bundle(
     bower={
         "bootstrap": "3.2.0",
         "font-awesome": "4.1.0",
-        "typeahead.js-bootstrap3.less": "0.2.3",
+        # "typeahead.js-bootstrap3.less": "0.2.3",
+        "typeahead.js-bootstrap3.less": "git@github.com:hyspace/typeahead.js-bootstrap3.less.git#6b03952040b34eefc017b26bd4f355219d1aa5e3"
     }
 )
 
@@ -116,7 +117,7 @@ jquery = Bundle(
         "hogan": "~3",
         "MathJax": "~2.4",  # orphan
         "swfobject": "latest",  # orphan
-        "typeahead.js": "latest",
+        "typeahead.js": "~0.11.1",
         "uploadify": "latest"  # orphan
         #"bootstrap": "*", is set by invenio.css already.
     }

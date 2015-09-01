@@ -1,6 +1,6 @@
 /*
  * This file is part of Invenio.
- * Copyright (C) 2014 CERN.
+ * Copyright (C) 2014, 2015 CERN.
  *
  * Invenio is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,7 +26,7 @@
  * })
  */
 
-define([ 'jquery', 'typeahead', 'flight/lib/component' ], function($, bloodhound, flight_component){
+define([ 'jquery', 'bloodhound', 'typeahead', 'flight/lib/component' ], function($, Bloodhound, typeahead, flight_component){
 
   "use strict";
 
@@ -70,6 +70,7 @@ define([ 'jquery', 'typeahead', 'flight/lib/component' ], function($, bloodhound
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
           url: remote,
+          wildcard: '%QUERY',
           filter: function(list) {
             return list.results
           }
